@@ -15,7 +15,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     console.log("username:", username, "id:", id);
   
     try {
-        jwt.sign({username, id}, process.env.JWT_USER_SECRET!, {}, (err, token) => {
+        jwt.sign({username, id}, process.env.JWT_USER_SECRET!, { expiresIn: '1h' }, (err, token) => {
             if (err) {
                 return err;
             }
