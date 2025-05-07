@@ -1,0 +1,1 @@
+export const medusaServerUrl = process.env.VITE_MEDUSA_SERVER_URL;
