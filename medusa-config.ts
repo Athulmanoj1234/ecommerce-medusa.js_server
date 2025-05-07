@@ -18,7 +18,7 @@ const config = defineConfig({
   },
 
   admin: {
-    disable: true, //process.env.DISABLE_MEDUSA_ADMIN === "false" 
+    disable: false, //process.env.DISABLE_MEDUSA_ADMIN === "false" 
     backendUrl: process.env.VITE_MEDUSA_SERVER_URL,
   },
      
