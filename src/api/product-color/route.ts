@@ -11,5 +11,5 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const productColorService = req.scope.resolve("Ecommerce") as EcommerceSevicesType;
     const productColorGetResponse = await productColorService?.getProductColors();
-    res.json(productColorGetResponse);
+    res.json(productColorGetResponse); 
 }
