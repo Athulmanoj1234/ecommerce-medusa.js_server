@@ -76,4 +76,5 @@ export interface EcommerceSevicesType {
     deleteProductColor: (productId: string) => any;
     editProductSize: (productSizeData: ProductSizeInfo) => any;
     deleteProductSize: (productSizeId: string) => any;
+    getRelatedProducts: (productId: string) => any;
 }

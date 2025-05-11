@@ -1,5 +1,4 @@
 import { InjectManager, MedusaContext, MedusaError, MedusaService } from "@medusajs/framework/utils";
-import { colors } from "@mikro-orm/core";
 import { v4 as uuidv4 } from 'uuid';
 import { productLists } from "./models/product-lists";
 import { productColors } from "./models/product-colors";
@@ -355,10 +354,11 @@ export class ProductListModuleService extends MedusaService({
         if (!productId) {
             throw new MedusaError(MedusaError.Types.INVALID_ARGUMENT, "id didnt received");
         }
+        // product_lists.id, product_lists.title, product_lists.ratings, product_lists.product_image, product_lists.description, product_lists.fabricare, product_lists.price, product_colors.id, product_colors.color, product_colors.hexcode, product_sizes.id, product_sizes.short_name, product_sizes.full_name
         try {
-            const productInfo = await sharedContext.manager?.execute(`SELECT product_lists.id, product_lists.title, product_lists.ratings, product_lists.product_image, product_lists.description, product_lists.fabricare, product_lists.price, product_colors.id, product_colors.color, product_colors.hexcode, product_sizes.id, product_sizes.short_name, product_sizes.full_name
-                FROM product_colors
-                INNER JOIN product_lists ON product_colors.product_lists_id = product_lists.id 
+            const productInfo = await sharedContext.manager?.execute(`SELECT *
+                FROM product_lists
+                INNER JOIN product_colors ON product_colors.product_lists_id = product_lists.id 
                 INNER JOIN product_sizes ON product_sizes.product_lists_id = product_lists.id
                 WHERE product_lists.id = ?
                 `, [productId]);
@@ -372,13 +372,27 @@ export class ProductListModuleService extends MedusaService({
                     const  product_sizes= extractUnique(productInfo, "short_name");
                     console.log("colors is :", product_colors, "sizes is:", product_sizes);
 
-                    const { id, title, ratings, product_image, description, fabricare, price } = productInfo[0]; 
-
-                    return { id, title, ratings, price, product_image, description, fabricare, product_colors, product_sizes };
+                const id = productInfo![0].product_lists_id;
+                const {  title, ratings, product_image, description, fabricare, price } = productInfo[0]; 
+                return { id, title, ratings, price, product_image, description, fabricare, product_colors, product_sizes };
                 }
+               
                 throw new MedusaError(MedusaError.Types.DB_ERROR, "product information doesnt exist in the db or failed to fetch data from the database");
         } catch (err) {
             console.log(err);
+        }
+    }
+
+    @InjectManager()
+    async getRelatedProducts(productId: string, @MedusaContext() sharedContext: Context<EntityManager>) {
+        console.log("product i din function", productId);
+        try {
+            const relatedProducts = await sharedContext.manager?.execute("SELECT * FROM product_lists WHERE id != ?", [productId]);
+            console.log("related", relatedProducts);
+            return relatedProducts;
+        } catch (err) {
+            console.log("db fetching error", err);
+            return { status: 500, errmessege: err.messege };
         }
     }
 }
